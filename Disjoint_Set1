@@ -1,6 +1,6 @@
 // Problem Name:GEARS
 //Challenge: July long challenge Codechef
- 
+ // Reference https://cp-algorithms.com/data_structures/disjoint_set_union.html
     #include<bits/stdc++.h>
     #define SIZE 100050
     using namespace std;
