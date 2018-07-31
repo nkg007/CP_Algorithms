@@ -1,0 +1,117 @@
+
+// Problem Name:GEARS
+//Challenge: July long challenge Codechef
+ 
+#include<bits/stdc++.h>
+#define SIZE 100050
+using namespace std;
+#define debug(x) cout<<"value of "<<#x<<" is "<<x<<endl;
+typedef long long int ll;
+int par[SIZE], parity[SIZE],sz[SIZE],bipartite[SIZE],teeth[SIZE];
+ 
+void make_set(int n)
+{
+	for(int i=0;i<=n;i++)
+	{
+		par[i]=i;
+		parity[i]=0;
+		sz[i]=1;
+		bipartite[i]=1;
+		
+	}
+}
+int find_root(int a)
+{
+	if(a!=par[a])
+	return find_root(par[a]);
+	return par[a];
+}
+ 
+int find_parity(int a)
+{
+	if(par[a]!=a)
+	return parity[a]^find_parity(par[a]);
+	return parity[a];	
+}
+void add_edge(int a,int b)
+{
+	int root_a=find_root(a);
+	int root_b=find_root(b);
+	int par_a=find_parity(a);
+	int par_b=find_parity(b);
+	if((root_a==root_b) && (par_a==par_b))
+	{
+		bipartite[root_a]=0;
+	}
+	else
+	{
+		if(sz[root_a]<sz[root_b])
+		{
+			swap(root_a,root_b);
+			swap(par_a,par_b);
+		}
+		par[root_b]=root_a;
+		sz[root_a]+=sz[root_b];
+		parity[root_b]=par_a^par_b^1;
+		if(!bipartite[root_b])
+		bipartite[root_a]=0;
+	}
+}
+ 
+int main()
+{
+	int n,m;
+	cin>>n>>m;
+	for(int i=1;i<=n;i++)
+	{
+		cin>>teeth[i];
+		
+	}
+	make_set(n);
+	int a,b,c,d;
+	for(int i=1;i<=m;i++)
+	{
+		cin>>a;
+		if(a==1)
+		{
+			cin>>b>>c;
+			teeth[b]=c;
+			
+		}
+		else if(a==2)
+		{
+			cin>>b>>c;
+			add_edge(b,c);
+		}
+		else if(a==3)
+		{
+			cin>>b>>c>>d;
+			int par_b=find_root(b);
+			int par_c=find_root(c);
+			if(par_b!=par_c || bipartite[par_b]==0 || bipartite[par_c]==0)
+			cout<<"0"<<"\n";
+			else
+			{
+				int parity_b=find_parity(b);
+				int parity_c=find_parity(c);
+				ll num=teeth[b];
+			//	debug(num);
+				num*=d;
+				//debug(num);
+				ll den=teeth[c];
+			//	debug(den);
+				int hf=__gcd(num,den);
+			//	debug(hf);
+				num/=hf;
+				den/=hf;
+				if(parity_b!=parity_c)
+				{//cout<<"here"<<endl;
+				num*=-1;}
+				printf("%lld/%lld\n", num, den);
+				
+			}
+		}
+	}
+	return 0;
+	
+}

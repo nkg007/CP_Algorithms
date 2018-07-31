@@ -1,0 +1,113 @@
+// Problem Name:GEARS
+//Challenge: July long challenge Codechef
+ 
+    #include<bits/stdc++.h>
+    #define SIZE 100050
+    using namespace std;
+    typedef long long int ll;
+    int sz[SIZE],bipartite[SIZE],teeth[SIZE];
+    pair<int ,int>par[SIZE];
+    void make_set(int n)
+    {
+    	for(int i=0;i<=n;i++)
+    	{
+    		par[i].first=i;
+    		par[i].second=0;
+    		sz[i]=1;
+    		bipartite[i]=1;
+    		
+    	}
+    }
+    pair<int ,int> find_root(int a)
+    {
+    	if(a!=par[a].first)
+    	{
+    		int parity_a=par[a].second;
+    		par[a]=find_root(par[a].first);
+    		par[a].second^=parity_a;
+    	}
+    	return par[a];
+    }
+     
+    void add_edge(int a,int b)
+    {
+    	pair<int ,int>pa=find_root(a);
+    	pair<int ,int>pb=find_root(b);
+    	int root_a=pa.first;
+    	int root_b=pb.first;
+    	int par_a=pa.second;
+    	int par_b=pb.second;
+    	if((root_a==root_b) && (par_a==par_b))
+    	{
+    		bipartite[root_a]=0;
+    	}
+    	else
+    	{
+    		if(sz[root_a]<sz[root_b])
+    		{
+    			swap(root_a,root_b);
+    			swap(par_a,par_b);
+    		}
+    		par[root_b].first=root_a;
+    		sz[root_a]+=sz[root_b];
+    		par[root_b].second=par_a^par_b^1;
+    		if(!bipartite[root_b])
+    		bipartite[root_a]=0;
+    	}
+    }
+     
+    int main()
+    {
+    	int n,m;
+    	cin>>n>>m;
+    	for(int i=1;i<=n;i++)
+    	{
+    		cin>>teeth[i];
+    		
+    	}
+    	make_set(n);
+    	int a,b,c,d;
+    	for(int i=1;i<=m;i++)
+    	{
+    		cin>>a;
+    		if(a==1)
+    		{
+    			cin>>b>>c;
+    			teeth[b]=c;
+    			
+    		}
+    		else if(a==2)
+    		{
+    			cin>>b>>c;
+    			add_edge(b,c);
+    		}
+    		else if(a==3)
+    		{
+    			cin>>b>>c>>d;
+    			pair<int,int>pb=find_root(b);
+    			pair<int,int>pc=find_root(c);
+    			int par_b=pb.first;
+    			int par_c=pc.first;
+    			if(par_b!=par_c || bipartite[par_b]==0 || bipartite[par_c]==0)
+    			cout<<"0"<<"\n";
+    			else
+    			{
+    				int parity_b=pb.second;
+    				int parity_c=pc.second;
+    				ll num=teeth[b];
+    				num*=d;
+    				ll den=teeth[c];
+    				int hf=__gcd(num,den);
+    				num/=hf;
+    				den/=hf;
+    				if(parity_b!=parity_c)
+    				num*=-1;
+    				printf("%lld/%lld\n", num, den);
+    				
+    			}
+    		}
+    	}
+    	return 0;
+    	
+    }
+     
